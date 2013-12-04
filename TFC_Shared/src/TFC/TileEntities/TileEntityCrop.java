@@ -100,9 +100,9 @@ public class TileEntityCrop extends NetworkTileEntity
 				int nutri = tef != null ? tef.nutrients[nutriType] : 18000;
 				int soilMax = tef != null ? tef.getSoilMax() : 18000;
 				//waterBoost only helps if you are playing on a longer than default year length.
-				float waterBoost = TFC.Blocks.BlockFarmland.isWaterNearby(worldObj, xCoord, yCoord, zCoord) ? 0.1f : 0;
+				float waterBoost = TFC.Blocks.BlockFarmland.isWaterNearby(worldObj, xCoord, yCoord, zCoord) ? 0.2f : 0;
 
-				float nutriMult = (0.2f + ((float)nutri/(float)soilMax) * 0.5f) + waterBoost;
+				float nutriMult = (0.2f + ((float)nutri/(float)soilMax) * 0.6f) + waterBoost;
 
 				if(tef != null)
 				{
@@ -111,12 +111,11 @@ public class TileEntityCrop extends NetworkTileEntity
 					}
 				}
 
-				float growthRate = (((crop.numGrowthStages/(crop.growthTime*TFC_Time.timeRatio))+tempAdded)*nutriMult) * timeMultiplier;
-
+				float growthRate = (((crop.numGrowthStages/(crop.growthTime/TFC_Time.timeRatio))+tempAdded)*nutriMult) * TFC_Time.timeRatio;
 				int oldGrowth = (int) Math.floor(growth);
 
 				growth += growthRate;
-
+				
 				if(oldGrowth < (int) Math.floor(growth))
 				{
 					this.broadcastPacketInRange(createCropUpdatePacket());

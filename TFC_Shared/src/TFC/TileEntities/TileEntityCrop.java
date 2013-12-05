@@ -107,8 +107,8 @@ public class TileEntityCrop extends NetworkTileEntity
 						tef.DrainNutrients(nutriType, crop.nutrientUsageMult);
 					}
 				}
-
-				float growthRate = ((((float)crop.numGrowthStages/(float)crop.growthTime)/TFC_Time.timeRatio)+tempAdded)*nutriMult;
+				
+				float growthRate = ((((float)crop.numGrowthStages/(float)crop.growthTime)+tempAdded)*nutriMult)/TFC_Time.timeRatio;
 				
 				int oldGrowth = (int) Math.floor(growth);
 

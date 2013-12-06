@@ -108,7 +108,7 @@ public class TileEntityCrop extends NetworkTileEntity
 					}
 				}
 				
-				float growthRate = ((((float)crop.numGrowthStages/(float)crop.growthTime)+tempAdded)*nutriMult)/TFC_Time.timeRatio;
+				float growthRate = (((((float)crop.numGrowthStages/(float)crop.growthTime)+tempAdded)*nutriMult)/TFC_Time.timeRatio);
 				
 				int oldGrowth = (int) Math.floor(growth);
 

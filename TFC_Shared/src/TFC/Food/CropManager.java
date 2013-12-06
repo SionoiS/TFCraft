@@ -48,15 +48,15 @@ public class CropManager
     
     static
     {
-        instance.addIndex(new CropIndex(/*ID*/0, /*Name*/"wheat", /*type*/0, /*time*/120, /*stages*/7, /*minGTemp*/4, /*minATemp*/0, /*nutrientUsage*/1.1f, TFCItems.SeedsWheat).setOutput1(TFCItems.WheatWhole, 1, 1));
+        instance.addIndex(new CropIndex(/*ID*/0, /*Name*/"wheat", /*type*/0, /*time*/100, /*stages*/7, /*minGTemp*/4, /*minATemp*/0, /*nutrientUsage*/1.1f, TFCItems.SeedsWheat).setOutput1(TFCItems.WheatWhole, 1, 1));
            
-        instance.addIndex(new CropIndex(/*ID*/2, /*Name*/"maize", /*type*/0, /*time*/135, /*stages*/5, /*minGTemp*/8, /*minATemp*/0, /*nutrientUsage*/1.2f, TFCItems.SeedsMaize).setOutput1(TFCItems.MaizeEar, 1, 3));
+        instance.addIndex(new CropIndex(/*ID*/2, /*Name*/"maize", /*type*/0, /*time*/120, /*stages*/5, /*minGTemp*/8, /*minATemp*/0, /*nutrientUsage*/1.2f, TFCItems.SeedsMaize).setOutput1(TFCItems.MaizeEar, 1, 3));
      
-        instance.addIndex(new CropIndex(/*ID*/4, /*Name*/"tomato", /*type*/0, /*time*/85, /*stages*/7, /*minGTemp*/8, /*minATemp*/0, /*nutrientUsage*/1.2f, TFCItems.SeedsTomato).setWaterUsage(1.2f).setOutput1(TFCItems.Tomato, 1, 4));
+        instance.addIndex(new CropIndex(/*ID*/4, /*Name*/"tomato", /*type*/0, /*time*/90, /*stages*/7, /*minGTemp*/8, /*minATemp*/0, /*nutrientUsage*/1.2f, TFCItems.SeedsTomato).setWaterUsage(1.2f).setOutput1(TFCItems.Tomato, 1, 4));
         
         instance.addIndex(new CropIndex(/*ID*/5, /*Name*/"barley", /*type*/0, /*time*/125, /*stages*/7, /*minGTemp*/4, /*minATemp*/0, /*nutrientUsage*/1.1f, TFCItems.SeedsBarley).setOutput1(TFCItems.BarleyWhole, 1, 1));
                 
-        instance.addIndex(new CropIndex(/*ID*/7, /*Name*/"rye", /*type*/0, /*time*/120, /*stages*/7, /*minGTemp*/4, /*minATemp*/0, /*nutrientUsage*/1.1f, TFCItems.SeedsRye).setOutput1(TFCItems.RyeWhole, 1, 1));
+        instance.addIndex(new CropIndex(/*ID*/7, /*Name*/"rye", /*type*/0, /*time*/120, /*stages*/7, /*minGTemp*/1, /*minATemp*/0, /*nutrientUsage*/1.1f, TFCItems.SeedsRye).setOutput1(TFCItems.RyeWhole, 1, 1));
             
         instance.addIndex(new CropIndex(/*ID*/9, /*Name*/"oat", /*type*/0, /*time*/120, /*stages*/7, /*minGTemp*/4, /*minATemp*/0, /*nutrientUsage*/1.1f, TFCItems.SeedsOat).setWaterUsage(1.4f).setOutput1(TFCItems.OatWhole, 1, 1));
           
@@ -79,6 +79,6 @@ public class CropManager
         
         instance.addIndex(new CropIndex(/*ID*/22, /*Name*/"greenbean", /*type*/1, /*time*/90, /*stages*/6, /*minGTemp*/8, /*minATemp*/0, /*nutrientUsage*/1.0f, TFCItems.SeedsGreenbean, new int[]{10,10,0}).setOutput1(TFCItems.Greenbeans, 4, 8));
         
-        instance.addIndex(new CropIndex(/*ID*/23, /*Name*/"squash", /*type*/2, /*time*/125, /*stages*/6, /*minGTemp*/8, /*minATemp*/0, /*nutrientUsage*/0.9f, TFCItems.SeedsSquash).setOutput1(TFCItems.Squash, 1, 4));
+        instance.addIndex(new CropIndex(/*ID*/23, /*Name*/"squash", /*type*/2, /*time*/100, /*stages*/6, /*minGTemp*/8, /*minATemp*/0, /*nutrientUsage*/0.9f, TFCItems.SeedsSquash).setOutput1(TFCItems.Squash, 1, 4));
     }
 }

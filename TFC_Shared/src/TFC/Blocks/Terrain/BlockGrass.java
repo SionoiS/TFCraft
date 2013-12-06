@@ -215,19 +215,23 @@ public class BlockGrass extends net.minecraft.block.BlockGrass
 				if (TFC_Core.isGrass(id) && !TFC_Core.isDryGrass(id) && world.getBlockLightValue(i, j + 1, k) >= 4 && 
 						world.getBlockMaterial(i, j + 1, k) != Material.water && world.getBlockId(i, j + 1, k) == 0)
 				{
-					/*Time it take to grow grass (month)*/
-					float timeModifier = 1.0F;
+					/*Time it take to grow grass (months)*/
+					float grassTimeModifier = 1.0F;
 					
-					if(rand.nextInt((int) (((int)TFC_Time.ticksInMonth*timeModifier/1200)/2)) == 0 && temp > 10)
+					/*Time it take to grow trees (years)*/
+					float treesTimeModifier = 1.0F;
+					
+					float rainModifier = (rain*TFC_Time.timeRatio);
+					
+					if(rand.nextInt((int) ((((TFC_Time.ticksInMonth * grassTimeModifier) - rainModifier) / 1200) / 2)) == 0 && temp > 10)
 					{
 						world.setBlock(i, j + 1, k, Block.tallGrass.blockID, 1, 0x2);
 					}
-					else if(rand.nextInt(15000) == 0 && temp > 20 && world.canBlockSeeTheSky(i, j, k))
+					else if(rand.nextInt((int) ((((TFC_Time.ticksInYear * treesTimeModifier) - rainModifier) / 1200) / 2)) == 0 && temp > 20 && world.canBlockSeeTheSky(i, j, k))
 					{
 						new WorldGenGrowTrees().generate(world, rand, i, j, k);
 					}
 				}
-
 				boolean nearWater = false;
 
 				for(int y = 0; y < 2 && !nearWater; y++)

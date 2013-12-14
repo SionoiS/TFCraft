@@ -43,44 +43,64 @@ public class TFC_Climate
 				
 				switch(month)
 				{
-					case 9:
-					case 11:
+					case 10://January
 					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -12.5*latitudeFactor- (latitudeFactor*80));
+						monthTempCache[month][zCoord] = (float)(MAXTEMP -98*Math.pow(latitudeFactor, 1.5));
 						break;
 					}
-					case 0:
-					case 8:
+					case 11://February
 					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -10*latitudeFactor- (latitudeFactor*54));
+						monthTempCache[month][zCoord] = (float)(MAXTEMP -95*Math.pow(latitudeFactor, 2));
 						break;
 					}
-					case 1:
-					case 7:
+					case 0://March
 					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -7.5*latitudeFactor- (latitudeFactor*41));
+						monthTempCache[month][zCoord] = (float)(MAXTEMP -92*Math.pow(latitudeFactor, 2.5));
 						break;
 					}
-					case 2:
-					case 6:
+					case 1://April
 					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP - 5*latitudeFactor- (latitudeFactor*28));
+						monthTempCache[month][zCoord] = (float)(MAXTEMP -88*Math.pow(latitudeFactor, 3));
 						break;
 					}
-					case 3:
-					case 5:
+					case 2://May
 					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -2.5*latitudeFactor- (latitudeFactor*15)); 
+						monthTempCache[month][zCoord] = (float)(MAXTEMP -79*Math.pow(latitudeFactor, 4));
 						break;
 					}
-					case 4:
+					case 3://June
 					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -1.5*latitudeFactor- (latitudeFactor*10));
+						monthTempCache[month][zCoord] = (float)(MAXTEMP -70*Math.pow(latitudeFactor, 5));
 						break;
 					}
-					case 10:
+					case 4://July
 					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP-15*latitudeFactor - (latitudeFactor*67));
+						monthTempCache[month][zCoord] = (float)(MAXTEMP -61*Math.pow(latitudeFactor, 6));
+						break;
+					}
+					case 5://August
+					{
+						monthTempCache[month][zCoord] = (float)(MAXTEMP -70*Math.pow(latitudeFactor, 5)); 
+						break;
+					}
+					case 6://September
+					{
+						monthTempCache[month][zCoord] = (float)(MAXTEMP -79*Math.pow(latitudeFactor, 4));
+						break;
+					}
+					case 7://October
+					{
+						monthTempCache[month][zCoord] = (float)(MAXTEMP -88*Math.pow(latitudeFactor, 3));
+						break;
+					}
+					case 8://November
+					{
+						monthTempCache[month][zCoord] = (float)(MAXTEMP -92*Math.pow(latitudeFactor, 2.5));
+						break;
+					}
+					case 9://December
+					{
+						monthTempCache[month][zCoord] = (float)(MAXTEMP -95*Math.pow(latitudeFactor, 2));
 						break;
 					}
 				}
@@ -89,64 +109,64 @@ public class TFC_Climate
 				
 				switch(month)
 				{
-					case 11:
+					case 10://January
+					{
+						monthTempFactorCache[month][zCoord] = 1-(diff*5);
+						break;
+					}
+					case 11://February
 					{
 						monthTempFactorCache[month][zCoord] = 1-(diff*4);
 						break;
 					}
-					case 0:
+					case 0://March
 					{
 						monthTempFactorCache[month][zCoord] = 1-(diff*3);
 						break;
 					}
-					case 1:
+					case 1://April
 					{
 						monthTempFactorCache[month][zCoord] = 1-(diff*2);
 						break;
 					}
-					case 2:
+					case 2://May
 					{
 						monthTempFactorCache[month][zCoord] = 1-(diff*1);
 						break;
 					}
-					case 3:
+					case 3://June
 					{
 						monthTempFactorCache[month][zCoord] = 1-(diff);
 						break;
 					}
-					case 4:
+					case 4://July
 					{
 						monthTempFactorCache[month][zCoord] = 1F;
 						break;
 					}
-					case 5:
+					case 5://August
 					{
 						monthTempFactorCache[month][zCoord] = 1-(diff*1.2f);
 						break;
 					}
-					case 6:
+					case 6://September
 					{
 						monthTempFactorCache[month][zCoord] = 1-(diff*2.4f);
 						break;
 					}
-					case 7:
+					case 7://October
 					{
 						monthTempFactorCache[month][zCoord] = 1-(diff*3.6f);
 						break;
 					}
-					case 8:
+					case 8://November
 					{
 						monthTempFactorCache[month][zCoord] = 1-(diff*4.8f);
 						break;
 					}
-					case 9:
+					case 9://December
 					{
 						monthTempFactorCache[month][zCoord] = factor;
-						break;
-					}
-					case 10:
-					{
-						monthTempFactorCache[month][zCoord] = 1-(diff*5);
 						break;
 					}
 				}

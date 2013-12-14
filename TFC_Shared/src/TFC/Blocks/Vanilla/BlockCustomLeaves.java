@@ -238,8 +238,6 @@ public class BlockCustomLeaves extends BlockLeaves implements IShearable
                             entityplayer.addExhaustion(0.045F);
                             if(new Random().nextInt(100) < 11)
                                 dropBlockAsItem_do(world, i+x, j+y, k+z, new ItemStack(Item.stick, 1));
-                            else if(new Random().nextInt(100) < 4 && l != 9 && l != 15)
-                                dropBlockAsItem_do(world, i+x, j+y, k+z, new ItemStack(TFCBlocks.Sapling, 1, l));
                             removeLeaves(world, i+x, j+y, k+z);
                             super.harvestBlock(world, entityplayer, i+x, j+y, k+z, l);
                             
@@ -267,8 +265,6 @@ public class BlockCustomLeaves extends BlockLeaves implements IShearable
             entityplayer.addExhaustion(0.025F);
             if(new Random().nextInt(100) < 28)
                 dropBlockAsItem_do(world, i, j, k, new ItemStack(Item.stick, 1));
-            else if(new Random().nextInt(100) < 6 && l != 9 && l != 15)
-                dropBlockAsItem_do(world, i, j, k, new ItemStack(TFCBlocks.Sapling, 1, l));
 
             super.harvestBlock(world, entityplayer, i, j, k, l);
         }

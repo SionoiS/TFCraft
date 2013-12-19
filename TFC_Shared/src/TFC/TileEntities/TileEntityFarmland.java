@@ -118,7 +118,7 @@ public class TileEntityFarmland extends NetworkTileEntity
 
 	public void DrainNutrients(int type, float multiplier)
 	{
-		nutrients[type] -= (int) (100*multiplier/TFC_Time.timeRatio);
+		nutrients[type] -= (int) ((100*multiplier)/TFC_Time.timeRatio);
 	}
 
 	/**

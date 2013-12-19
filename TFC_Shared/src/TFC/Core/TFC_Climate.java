@@ -15,373 +15,86 @@ public class TFC_Climate
 {
 	public static World worldObj;
 	public static TFCWorldChunkManager manager;
-	private static final float[] zFactorCache = new float[30001];
-	private static final float[][] monthTempCache = new float[12][30001];
-	private static final float[][] monthTempFactorCache = new float[12][30001];
-	
+	private static final float[] latitudeMinTemp = new float[30001];
+	private static final float[] latitudeMaxTemp = new float[30001];
+	private static final float[] heightMod = new float[257];
+	private static final float[] daysCache = new float[TFC_Time.daysInYear];
 	/**
 	 * All Temperature related code
 	 */
 	
 	public static void initCache()
 	{
-		for(int zCoord = 0; zCoord < getMaxZPos() + 1; ++zCoord)
+		for(int yCoord = 0; yCoord < 256; ++yCoord)
 		{
-			float factor = 0;
-			float z = zCoord;
-
-			factor = (getMaxZPos()-z)/(getMaxZPos());
+			heightMod[yCoord] = (float) (-0.00001*Math.pow((yCoord-100), 3)+1);
+		}
+		
+		for(int zCoord = 0; zCoord < 30000; ++zCoord)
+		{	
+			float zFactor = ((float)zCoord/30000);
 			
-			zFactorCache[zCoord] = factor;
-			
-			for(int month = 0; month < 12; ++month)
-			{
-				final float MAXTEMP = 35F;
-
-				double angle = factor * (Math.PI / 2);
-				double latitudeFactor = Math.cos(angle);
-				
-				switch(month)
-				{
-					case 10://January
-					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -98*Math.pow(latitudeFactor, 1.5));
-						break;
-					}
-					case 11://February
-					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -95*Math.pow(latitudeFactor, 2));
-						break;
-					}
-					case 0://March
-					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -92*Math.pow(latitudeFactor, 2.5));
-						break;
-					}
-					case 1://April
-					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -88*Math.pow(latitudeFactor, 3));
-						break;
-					}
-					case 2://May
-					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -79*Math.pow(latitudeFactor, 4));
-						break;
-					}
-					case 3://June
-					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -70*Math.pow(latitudeFactor, 5));
-						break;
-					}
-					case 4://July
-					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -61*Math.pow(latitudeFactor, 6));
-						break;
-					}
-					case 5://August
-					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -70*Math.pow(latitudeFactor, 5)); 
-						break;
-					}
-					case 6://September
-					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -79*Math.pow(latitudeFactor, 4));
-						break;
-					}
-					case 7://October
-					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -88*Math.pow(latitudeFactor, 3));
-						break;
-					}
-					case 8://November
-					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -92*Math.pow(latitudeFactor, 2.5));
-						break;
-					}
-					case 9://December
-					{
-						monthTempCache[month][zCoord] = (float)(MAXTEMP -95*Math.pow(latitudeFactor, 2));
-						break;
-					}
-				}
-				
-				float diff = (1-factor) / 6;
-				
-				switch(month)
-				{
-					case 10://January
-					{
-						monthTempFactorCache[month][zCoord] = 1-(diff*5);
-						break;
-					}
-					case 11://February
-					{
-						monthTempFactorCache[month][zCoord] = 1-(diff*4);
-						break;
-					}
-					case 0://March
-					{
-						monthTempFactorCache[month][zCoord] = 1-(diff*3);
-						break;
-					}
-					case 1://April
-					{
-						monthTempFactorCache[month][zCoord] = 1-(diff*2);
-						break;
-					}
-					case 2://May
-					{
-						monthTempFactorCache[month][zCoord] = 1-(diff*1);
-						break;
-					}
-					case 3://June
-					{
-						monthTempFactorCache[month][zCoord] = 1-(diff);
-						break;
-					}
-					case 4://July
-					{
-						monthTempFactorCache[month][zCoord] = 1F;
-						break;
-					}
-					case 5://August
-					{
-						monthTempFactorCache[month][zCoord] = 1-(diff*1.2f);
-						break;
-					}
-					case 6://September
-					{
-						monthTempFactorCache[month][zCoord] = 1-(diff*2.4f);
-						break;
-					}
-					case 7://October
-					{
-						monthTempFactorCache[month][zCoord] = 1-(diff*3.6f);
-						break;
-					}
-					case 8://November
-					{
-						monthTempFactorCache[month][zCoord] = 1-(diff*4.8f);
-						break;
-					}
-					case 9://December
-					{
-						monthTempFactorCache[month][zCoord] = factor;
-						break;
-					}
-				}
-			}
+			latitudeMinTemp[zCoord] = (float) (-75*Math.pow(zFactor, 2.75)+35);
+			latitudeMaxTemp[zCoord] = (float) (-50*Math.pow(zFactor, 6)+35);
+		}
+		
+		for(int day = 0; day < TFC_Time.daysInYear; ++day)
+		{
+			daysCache[day] = (float) (Math.sin((day-TFC_Time.daysInMonth)*(Math.PI/TFC_Time.daysInYear*2)));
 		}
 	}
 
-	protected static float getZFactor(int zCoord)
-	{
-		if(zCoord < 0)
-			zCoord = -zCoord;
-		
-		if(zCoord > getMaxZPos()) zCoord = (getMaxZPos());
-		
-		return zFactorCache[zCoord];
-	}
-
-	protected static float getTemp(int x, int z)
-	{
-		return getTemp(TFC_Time.currentDay, x, z);
-	}
-
-	protected static float getTemp(int day, int x, int z)
+	protected static float getTemp(int day, int x, int y, int z)
 	{
 		if(manager!= null)
 		{
+			if(y >= 256){y = 256;}
+			int zCoord = Math.abs(z);
+			if(zCoord >= 30000){zCoord = 30000;}
 			
-			float zMod = getZFactor(z);
-			float zTemp = (zMod * getMaxTemperature())-20;
+			float rain = manager.getRainfallLayerAt(x, z).floatdata1;
 
-			float rainMod = 1-manager.getRainfallLayerAt(x, z).floatdata1/16000;
-
-			int _month = TFC_Time.getMonthFromDayOfYear(day);
-			int _lastmonth = TFC_Time.getMonthFromDayOfYear(day-TFC_Time.daysInMonth);
-
-			float mod = getMonthTempFactor(_month, z);
-			float modLast = getMonthTempFactor(_lastmonth, z);
-			int day2 = day - ((day/TFC_Time.daysInMonth)*TFC_Time.daysInMonth);
-			int hour = (int) TFC_Time.getHour();
-
-			if(hour < 0)
-				hour = 23 + hour;
-			float hourMod = 0;
-
-			if(hour < 12)
-				hourMod = ((float)hour/11) * 0.3F;
-			else
-				hourMod = 0.3F - (((float)(hour-12)/11) * 0.3F);
-
-			float monthMod = 0;
-			float temp = 0;
-
-			float dailyTemp = WeatherManager.getInstance().getDailyTemp(day);
-
-			if(modLast > mod)
-			{
-				monthMod = ((modLast-mod)/TFC_Time.daysInMonth)*day2;
-				monthMod = (modLast - monthMod);
-
-				temp += getMonthTemp(_month,z) + dailyTemp;//((zTemp + dailyTemp));
-				if(temp < 0)monthMod = 1 - monthMod;
-				temp *= monthMod;
-				temp += (hourMod*(zTemp + dailyTemp));
-				temp += (8*rainMod)*zMod;
-			}
-			else
-			{
-				monthMod = ((modLast-mod)/TFC_Time.daysInMonth)*day2;
-				monthMod = (modLast + monthMod);
-
-				temp += getMonthTemp(_month,z) + dailyTemp;//((zTemp + dailyTemp));
-				if(temp < 0)monthMod = 1 - monthMod;
-				temp *= monthMod;
-				temp += (hourMod*(zTemp + dailyTemp));
-				temp += (8*rainMod)*zMod;
-			}
-
+			float temp = (float) ((((latitudeMaxTemp[zCoord]-latitudeMinTemp[zCoord])*daysCache[day])+latitudeMinTemp[zCoord])+heightMod[y]);
+			
 			return temp;
 		}
 		return -10;
 	}
 
-	protected static float getBioTemp(int day, int x, int z)
+	protected static float getBioTemp(int day, int x, int y, int z)
 	{
 		if(manager!= null)
 		{
-			float zMod = getZFactor(z);
-			float zTemp = (zMod * getMaxTemperature())-20;
-
+			if(y >= 256){y = 256;}
+			int zCoord = Math.abs(z);
+			if(zCoord >= 30000){zCoord = 30000;}
 
 			float rain = manager.getRainfallLayerAt(x, z).floatdata1;
-			float rainMod = 1-(rain/4000);
-
-			int _month = TFC_Time.getMonthFromDayOfYear(day);
-			int _lastmonth = TFC_Time.getMonthFromDayOfYear(day-TFC_Time.daysInMonth);
-
-			float monthModifier = getMonthTempFactor(_month, z);
-			float lastMonthModifier = getMonthTempFactor(_lastmonth, z);
-
-			int dayOfMonth =  TFC_Time.getDayOfMonthFromDayOfYear(day);
-
-			float hourMod = 0.2f;
-
-			float monthMod = 0;
-			float temp = 0;
-
-			if(lastMonthModifier > monthModifier)
-			{
-				monthMod = ((lastMonthModifier-monthModifier)/TFC_Time.daysInMonth)*dayOfMonth;
-				monthMod = (lastMonthModifier - monthMod);
-
-				temp += getMonthTemp(_month,z);//((zTemp));
-				if(temp < 0)monthMod = 1 - monthMod;
-				temp *= monthMod;
-				temp += (hourMod*(zTemp));
-				temp += (8*rainMod)*zMod;
-			}
-			else
-			{
-				monthMod = ((lastMonthModifier-monthModifier)/TFC_Time.daysInMonth)*dayOfMonth;
-				monthMod = (lastMonthModifier + monthMod);
-
-				temp += getMonthTemp(_month,z);//((zTemp));
-				if(temp < 0)monthMod = 1 - monthMod;
-				temp *= monthMod;
-				temp += (hourMod*(zTemp));
-				temp += (8*rainMod)*zMod;
-			}
-
+			
+			float temp = (float) ((((latitudeMaxTemp[zCoord]-latitudeMinTemp[zCoord])*daysCache[day])+latitudeMinTemp[zCoord])+heightMod[y]);
+			
 			return temp;
 		}
 		return -10;
-	}
-
-	protected static float getMonthTemp(int month, int z)
-	{
-		if(z < 0)
-			z = -z;
-		
-		if(z > getMaxZPos()) z = (getMaxZPos());
-		
-		return monthTempCache[month][z];
-	}
-
-	protected static float getMonthTempFactor(int month, int z)
-	{
-		if(z < 0)
-			z = -z;
-		
-		if(z > getMaxZPos()) z = (getMaxZPos());
-		
-		return monthTempFactorCache[month][z];
-	}
-
-	protected static float getTempSpecificDay(int day, int x, int z)
-	{
-		return getTemp(day, x, z);
 	}
 
 	public static float getHeightAdjustedTemp(int x, int y, int z)
 	{
-		float temp = getTemp(x, z);
-
-		temp += getTemp(x+1, z);
-		temp += getTemp(x-1, z);
-		temp += getTemp(x, z+1);
-		temp += getTemp(x, z-1);
-
-		temp/= 5;
-
-		if(y > 180)
-			temp -= Math.abs(temp) * (y-180)/90;
-
-		return temp;
-	}
-
-	public static float adjustHeightToTemp(int y, float temp)
-	{
-		if(y > 180)
-			temp -= Math.abs(temp) * (y-180)/90;
-
-		return temp;
+		return getTemp(TFC_Time.currentDay, x, y, z);
 	}
 
 	public static float getHeightAdjustedTempSpecificDay(int day, int x, int y, int z)
 	{
-		float temp = getTempSpecificDay(day, x, z);
-
-		if(y > 180)
-			temp -= Math.abs(temp) * (y-180)/90;
-
-		return temp;
+		return getTemp(day, x, y, z);
 	}
-
-	public static float getHeightAdjustedBioTemp(int day, int x, int y, int z)
-	{
-		float temp = getBioTemp(day, x, z);
-
-		if(y > 180)
-			temp -= Math.abs(temp) * (y-180)/90;
-
-		return temp;
-	}
-
-	public static float getMaxTemperature()
-	{
-		return 52;
-	}
-
+	
+	/**Average Temperature*/
 	public static float getBioTemperatureHeight(int x, int y, int z)
 	{
 		float temp = 0;
 		for(int i = 0; i < 12; i++)
 		{
-			float t = getHeightAdjustedBioTemp(i*TFC_Time.daysInMonth, x, y, z);
+			float t = getBioTemp(i*TFC_Time.daysInMonth, x, y, z);
 			if(t < 0)
 				t = 0;
 
@@ -389,13 +102,14 @@ public class TFC_Climate
 		}
 		return temp/12;
 	}
-
+	
+	/**Average Temperature*/
 	public static float getBioTemperature(int x, int z)
 	{
 		float temp = 0;
 		for(int i = 0; i < 24; i++)
 		{
-			float t = getBioTemp(i*TFC_Time.daysInMonth/2, x, z);
+			float t = getBioTemp(i*TFC_Time.daysInMonth/2, x, 144, z);
 			if(t < 0)
 				t = 0;
 
@@ -410,7 +124,7 @@ public class TFC_Climate
 	 */
 	public static int getGrassColor(World world, int x, int y, int z)
 	{
-		float temp = (getTemp(x, z)/getMaxTemperature());
+		float temp = (getHeightAdjustedTemp(x,y,z)/35);
 
 		float rain = (TFC_Climate.getRainfall(x, y, z) / 8000);
 
@@ -428,12 +142,13 @@ public class TFC_Climate
 	{
 		if(TFC_Time.currentMonth < 9)
 		{
-			float temp = (getTemp(x, z)+35)/(getMaxTemperature()+35);
-			//float evt = (1 - (((TFCWorldChunkManager)world.provider.worldChunkMgr).getEVTLayerAt(x, z).floatdata1 / 16))*0.5f;
+			float temp = (getHeightAdjustedTemp(x,y,z)/35);
+			
 			float rain = (TFC_Climate.getRainfall(x, y, z) / 8000);
 
 			double var1 = Helper.clamp_float(temp, 0.0F, 1.0F);
 			double var3 = Helper.clamp_float(rain, 0.0F, 1.0F);
+			
 			return ColorizerFoliageTFC.getFoliageColor(var1, var3);
 		}
 		else
@@ -525,11 +240,6 @@ public class TFC_Climate
 	public static int[] getRockLayer(int x, int y, int z, int index)
 	{
 		return new int[] {manager.getRockLayerAt(x, z, index).data1, manager.getRockLayerAt(x, z, index).data2};
-	}
-
-	public static int getMaxZPos()
-	{
-		return 30000;
 	}
 
 	public static boolean isSwamp(int x, int y, int z)

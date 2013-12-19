@@ -222,7 +222,7 @@ public class BlockGrass extends net.minecraft.block.BlockGrass
 					{
 						world.setBlock(i, j + 1, k, Block.tallGrass.blockID, 1, 0x2);
 					}
-					else if(rand.nextInt((int) ((((TFC_Time.ticksInYear) - rainModifier) / 1200) / 2)) == 0 && temp > 20 && world.canBlockSeeTheSky(i, j, k))
+					else if(rand.nextInt((int) ((((TFC_Time.ticksInYear*4) - rainModifier) / 1200) / 2)) == 0 && temp > 20 && world.canBlockSeeTheSky(i, j, k))
 					{
 						new WorldGenGrowTrees().generate(world, rand, i, j, k);
 					}

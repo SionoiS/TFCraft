@@ -19,6 +19,7 @@ public class TFC_Climate
 	private static final float[] latitudeMaxTemp = new float[30001];
 	private static final float[] heightMod = new float[257];
 	private static final float[] daysCache = new float[TFC_Time.daysInYear];
+	private static final float[][] hoursMod = new float[25][8001];
 	/**
 	 * All Temperature related code
 	 */
@@ -42,6 +43,16 @@ public class TFC_Climate
 		{
 			daysCache[day] = (float) (Math.sin((day-TFC_Time.daysInMonth)*(Math.PI/TFC_Time.daysInYear*2)));
 		}
+		
+		float[] rain = {8000f,4000f,2000f,1000f,500f,250f,62.5f,0f};
+		for(int hour = 0; hour < 24; ++hour)
+		{
+			for(float item : rain)
+			{
+				float rainFactor = (float)((item/1000)+1);
+				hoursMod[hour][(int) item] = (float) ((25/Math.pow(rainFactor, 3))*(Math.sin((Math.PI/12)*(hour-6)))-((12/rainFactor)-2));
+			}
+		}
 	}
 
 	protected static float getTemp(int day, int x, int y, int z)
@@ -53,8 +64,10 @@ public class TFC_Climate
 			if(zCoord >= 30000){zCoord = 30000;}
 			
 			float rain = manager.getRainfallLayerAt(x, z).floatdata1;
+			
+			int hour = (int) TFC_Time.getHour();
 
-			float temp = (float) ((((latitudeMaxTemp[zCoord]-latitudeMinTemp[zCoord])*daysCache[day])+latitudeMinTemp[zCoord])+heightMod[y]);
+			float temp = (float) (((((latitudeMaxTemp[zCoord]-latitudeMinTemp[zCoord])*daysCache[day])+latitudeMinTemp[zCoord])+heightMod[y])+hoursMod[hour][(int) rain]);
 			
 			return temp;
 		}
@@ -71,7 +84,7 @@ public class TFC_Climate
 
 			float rain = manager.getRainfallLayerAt(x, z).floatdata1;
 			
-			float temp = (float) ((((latitudeMaxTemp[zCoord]-latitudeMinTemp[zCoord])*daysCache[day])+latitudeMinTemp[zCoord])+heightMod[y]);
+			float temp = (float) (((((latitudeMaxTemp[zCoord]-latitudeMinTemp[zCoord])*daysCache[day])+latitudeMinTemp[zCoord])+heightMod[y])+hoursMod[6][(int) rain]);
 			
 			return temp;
 		}

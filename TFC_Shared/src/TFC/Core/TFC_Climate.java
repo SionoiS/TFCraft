@@ -1,6 +1,7 @@
 package TFC.Core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import net.minecraft.world.World;
@@ -15,11 +16,10 @@ public class TFC_Climate
 {
 	public static World worldObj;
 	public static TFCWorldChunkManager manager;
-	private static final float[] latitudeMinTemp = new float[30001];
-	private static final float[] latitudeTempVar = new float[30001];
-	private static final float[] heightMod = new float[257];
-	private static final float[] daysCache = new float[TFC_Time.daysInYear];
-	private static final float[][] hoursMod = new float[25][8001];
+	private static final float[] rainCache = {62.5f,125f,250f,500f,1000f,2000f,4000f,8000f};
+	private static final float[] heightMod = new float[256];
+	private static final float[][] hoursMod = new float[rainCache.length][24];
+	private static final float[][] tempVar = new float[TFC_Time.daysInYear][30000];
 	/**
 	 * All Temperature related code
 	 */
@@ -30,28 +30,31 @@ public class TFC_Climate
 		{
 			heightMod[yCoord] = (float) (-0.00001*Math.pow((yCoord-100), 3)+1);
 		}
-		
-		for(int zCoord = 0; zCoord < 30000; ++zCoord)
-		{	
-			float zFactor = ((float)zCoord/30000);
-			float latitudeMinTempEQ = (float) (-75*Math.pow(zFactor, 2.75)+35);
-			float latitudeMaxTempEQ = (float) (-50*Math.pow(zFactor, 6)+35);
-			latitudeMinTemp[zCoord] = latitudeMinTempEQ;
-			latitudeTempVar[zCoord] = latitudeMaxTempEQ-latitudeMinTempEQ;
-		}
-		
+
 		for(int day = 0; day < TFC_Time.daysInYear; ++day)
-		{
-			daysCache[day] = (float) (Math.sin((day-TFC_Time.daysInMonth)*(Math.PI/TFC_Time.daysInYear*2)));
+		{	
+			for(int zCoord = 0; zCoord < 30000; ++zCoord)
+			{
+				float zFactor = ((float)zCoord/30000);
+				float latitudeMinTempEQ = (float) (-75*Math.pow(zFactor, 2.75)+35);
+				float latitudeMaxTempEQ = (float) (-50*Math.pow(zFactor, 6)+35);
+				float seasonVarEQ = (float) (Math.sin((day-TFC_Time.daysInMonth)*(Math.PI/TFC_Time.daysInYear*2))); 
+				tempVar[day][zCoord] = (float) (((latitudeMaxTempEQ-latitudeMinTempEQ)*seasonVarEQ)+latitudeMinTempEQ);
+			}
 		}
+
 		
-		float[] rain = {8000f,4000f,2000f,1000f,500f,250f,62.5f,0f};
 		for(int hour = 0; hour < 24; ++hour)
 		{
-			for(float item : rain)
+			int itemIndex = 0;
+
+			for(float item : rainCache)
 			{
-				float rainFactor = (float)((item/1000)+1);
-				hoursMod[hour][(int) item] = (float) ((25/Math.pow(rainFactor, 3))*(Math.sin((Math.PI/12)*(hour-6)))-((12/rainFactor)-2));
+				float rainFactor = (float) ((item/1000)+1);
+				float dailyTempVar = (float) (25/Math.pow(rainFactor, 3));
+				float adjustedDailyTemp = (float) ((12/rainFactor)-2);
+				hoursMod[itemIndex][hour] = (float) (dailyTempVar*(Math.sin((Math.PI/12)*(hour-6)))-adjustedDailyTemp);
+				++itemIndex;
 			}
 		}
 	}
@@ -60,15 +63,16 @@ public class TFC_Climate
 	{
 		if(manager!= null)
 		{
-			if(y >= 256){y = 256;}
+			if(y > 254){y = 255;}
 			int zCoord = Math.abs(z);
-			if(zCoord >= 30000){zCoord = 30000;}
+			if(zCoord > 29998){zCoord = 29999;}
 			
-			float rain = manager.getRainfallLayerAt(x, z).floatdata1;
-			
+			int rain = manager.getRainfallLayerAt(x, z).ID - 100;
+			if(rain < 0){rain = 0;}
+
 			int hour = (int) TFC_Time.getHour();
 
-			float temp = (float) ((((latitudeTempVar[zCoord]*daysCache[day])+latitudeMinTemp[zCoord])+heightMod[y])+hoursMod[hour][(int) rain]);
+			float temp = (float) (tempVar[day][zCoord]+heightMod[y]+hoursMod[rain][hour]);
 			
 			return temp;
 		}
@@ -79,13 +83,14 @@ public class TFC_Climate
 	{
 		if(manager!= null)
 		{
-			if(y >= 256){y = 256;}
+			if(y > 254){y = 255;}
 			int zCoord = Math.abs(z);
-			if(zCoord >= 30000){zCoord = 30000;}
+			if(zCoord > 29998){zCoord = 29999;}
 
-			float rain = manager.getRainfallLayerAt(x, z).floatdata1;
-			
-			float temp = (float) ((((latitudeTempVar[zCoord]*daysCache[day])+latitudeMinTemp[zCoord])+heightMod[y])+hoursMod[6][(int) rain]);
+			int rain = manager.getRainfallLayerAt(x, z).ID - 100;
+			if(rain < 0){rain = 0;}
+
+			float temp = (float) (tempVar[day][zCoord]+heightMod[y]+hoursMod[rain][6]);
 			
 			return temp;
 		}
@@ -109,8 +114,6 @@ public class TFC_Climate
 		for(int i = 0; i < 12; i++)
 		{
 			float t = getBioTemp(i*TFC_Time.daysInMonth, x, y, z);
-			if(t < 0)
-				t = 0;
 
 			temp += t;
 		}
@@ -124,8 +127,6 @@ public class TFC_Climate
 		for(int i = 0; i < 24; i++)
 		{
 			float t = getBioTemp(i*TFC_Time.daysInMonth/2, x, 144, z);
-			if(t < 0)
-				t = 0;
 
 			temp += t;
 		}

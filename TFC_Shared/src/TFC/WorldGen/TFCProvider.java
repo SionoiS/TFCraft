@@ -118,7 +118,7 @@ public class TFCProvider extends WorldProvider
 		int var6 = 0;
 		int var7 = getAverageGroundLevel();
 		int var8 = 10000;
-		int startingZ = 17500;
+		int startingZ = 22500;
 
 		while(chunkcoordinates == null)
 		{

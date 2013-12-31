@@ -43,7 +43,6 @@ public class TFC_Climate
 			}
 		}
 
-		
 		for(int hour = 0; hour < 24; ++hour)
 		{
 			int itemIndex = 0;
@@ -66,14 +65,14 @@ public class TFC_Climate
 			if(y > 254){y = 255;}
 			int zCoord = Math.abs(z);
 			if(zCoord > 29998){zCoord = 29999;}
-			
+
 			int rain = manager.getRainfallLayerAt(x, z).ID - 100;
 			if(rain < 0){rain = 0;}
 
 			int hour = (int) TFC_Time.getHour();
 
 			float temp = (float) (tempVar[day][zCoord]+heightMod[y]+hoursMod[rain][hour]);
-			
+
 			return temp;
 		}
 		return -10;
@@ -91,7 +90,7 @@ public class TFC_Climate
 			if(rain < 0){rain = 0;}
 
 			float temp = (float) (tempVar[day][zCoord]+heightMod[y]+hoursMod[rain][6]);
-			
+
 			return temp;
 		}
 		return -10;

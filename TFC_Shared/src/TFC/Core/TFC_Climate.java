@@ -63,6 +63,7 @@ public class TFC_Climate
 		if(manager!= null)
 		{
 			if(y > 254){y = 255;}
+			if(y < 1){y = 0;}
 			int zCoord = Math.abs(z);
 			if(zCoord > 29998){zCoord = 29999;}
 
@@ -83,6 +84,7 @@ public class TFC_Climate
 		if(manager!= null)
 		{
 			if(y > 254){y = 255;}
+			if(y < 1){y = 0;}
 			int zCoord = Math.abs(z);
 			if(zCoord > 29998){zCoord = 29999;}
 

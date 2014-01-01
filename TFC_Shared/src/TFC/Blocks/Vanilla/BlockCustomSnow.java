@@ -126,7 +126,7 @@ public class BlockCustomSnow extends BlockTerra
 	@Override
 	public int tickRate(World world)
 	{
-		return 50;
+		return 25;
 	}
 
 	@Override
